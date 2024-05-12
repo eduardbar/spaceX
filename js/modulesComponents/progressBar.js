@@ -182,8 +182,8 @@ export const progressSecondStageDiameterRocket = async(Rockets)=>{
     
         let ProgressFist = document.createElement("progress");
         ProgressFist.max = meters;
-        ProgressFist.value = `${val.meters}`;
-        ProgressFist.textContent = `${val.meters}%`;
+        ProgressFist.value = `${val?.meters}`;
+        ProgressFist.textContent = `${val?.meters}%`;
     
     
         let divLast = document.createElement("div");

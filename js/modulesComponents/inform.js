@@ -3,80 +3,78 @@ import {
     getAllRocketEngineThrustVacuumTotal
 } from "../modules/rockets.js";
 
+const createDivWithClass = (className) => {
+    const div = document.createElement('div');
+    div.classList.add(className);
+    return div;
+};
 
-export const informRocketEngineThrustSeaLevel = async(thrust_sea_level)=>{
-    let {kN:totalKN} = await getAllRocketEngineTotal();
-    let pocentaje = (thrust_sea_level.kN * 100) / totalKN
+const createStrongElement = (text) => {
+    const strong = document.createElement('strong');
+    strong.textContent = text;
+    return strong;
+};
 
-    let div = document.createElement('div');
-    div.classList.add("carousel__item")
-    let divFirst = document.createElement('div');
-    divFirst.classList.add("item__progress__bar");
-    divFirst.style = `background: radial-gradient(closest-side, #1d1f38 85%, transparent 85% 100%), conic-gradient(var(--color--three) ${pocentaje}%, transparent 0)`
-    let divFirstChildren = document.createElement('div');
-    divFirstChildren.classList.add("progress__value")
-    let strong = document.createElement('strong');
-    strong.textContent = "Atmospheric acceleration"
-    let smallFirst = document.createElement('small');
-    smallFirst.textContent = `${pocentaje.toFixed(2)} %`
-    
-    let smallLast = document.createElement('small');
-    let kN = new Intl.NumberFormat('cop').format(thrust_sea_level.kN)
-    let lbf = new Intl.NumberFormat('cop').format(thrust_sea_level.lbf)
-    smallLast.innerHTML = `${kN} kN <br> ${lbf} Lbf`
+const createSmallElement = (text) => {
+    const small = document.createElement('small');
+    small.innerHTML = text;
+    return small;
+};
 
-    divFirstChildren.append(strong, smallFirst, smallLast)
-    divFirst.append(divFirstChildren)
-    div.append(divFirst)
-    let section__information__1 = document.querySelector("#section__information__1");
-    section__information__1.innerHTML = "";
-    section__information__1.append(div)
+const appendChildren = (parent, ...children) => {
+    children.forEach(child => {
+        parent.appendChild(child);
+    });
+};
 
-    // <div class="carousel__item">
-    //     <div class="item__progress__bar">
-    //         <div class="progress__value">
-    //             <strong>Title</strong>
-    //             <small>3</small>
-    //         </div>
-    //     </div>
-    // </div>
-}
+const formatNumber = (number) => {
+    return new Intl.NumberFormat('cop').format(number);
+};
 
+const createProgressBar = (percentage, label, kN, lbf) => {
+    const div = createDivWithClass("carousel__item");
+    const divFirst = createDivWithClass("item__progress__bar");
+    divFirst.style.background = `radial-gradient(closest-side, #1d1f38 85%, transparent 85% 100%), conic-gradient(var(--color--three) ${percentage}%, transparent 0)`;
 
-export const informRocketEngineThrustVacuum = async(thrust_vacuum)=>{
-    let {kN:totalKN} = await getAllRocketEngineThrustVacuumTotal();
-    let pocentaje = (thrust_vacuum.kN * 100) / totalKN;
+    const divFirstChildren = createDivWithClass("progress__value");
+    const strong = createStrongElement(label);
+    const smallFirst = createSmallElement(`${percentage.toFixed(2)} %`);
+    const smallLast = createSmallElement(`${formatNumber(kN)} kN <br> ${formatNumber(lbf)} Lbf`);
 
-    let div = document.createElement('div');
-    div.classList.add("carousel__item")
-    let divFirst = document.createElement('div');
-    divFirst.classList.add("item__progress__bar");
-    divFirst.style = `background: radial-gradient(closest-side, #1d1f38 85%, transparent 85% 100%), conic-gradient(var(--color--three) ${pocentaje}%, transparent 0)`
-    let divFirstChildren = document.createElement('div');
-    divFirstChildren.classList.add("progress__value")
-    let strong = document.createElement('strong');
-    strong.textContent = "Speed in space"
-    let smallFirst = document.createElement('small');
-    smallFirst.textContent = `${pocentaje.toFixed(2)} %`
-    
-    let smallLast = document.createElement('small');
-    let kN = new Intl.NumberFormat('cop').format(thrust_vacuum.kN)
-    let lbf = new Intl.NumberFormat('cop').format(thrust_vacuum.lbf)
-    smallLast.innerHTML = `${kN} kN <br> ${lbf} Lbf`
+    appendChildren(divFirstChildren, strong, smallFirst, smallLast);
+    appendChildren(divFirst, divFirstChildren);
+    appendChildren(div, divFirst);
 
-    divFirstChildren.append(strong, smallFirst, smallLast)
-    divFirst.append(divFirstChildren)
-    div.append(divFirst)
-    let section__information__1 = document.querySelector("#section__information__1");
-    // section__information__1.innerHTML = "";
-    section__information__1.append(div)
+    return div;
+};
 
-    // <div class="carousel__item">
-    //     <div class="item__progress__bar">
-    //         <div class="progress__value">
-    //             <strong>Title</strong>
-    //             <small>3</small>
-    //         </div>
-    //     </div>
-    // </div>
-}
+export const informRocketEngineThrustSeaLevel = async (thrust_sea_level) => {
+    const totalRocketEngine = await getAllRocketEngineTotal();
+    const percentage = (thrust_sea_level.kN * 100) / totalRocketEngine.kN;
+
+    const div = createProgressBar(percentage, "Atmospheric acceleration", thrust_sea_level.kN, thrust_sea_level.lbf);
+
+    const sectionInformation = document.querySelector("#section__information__1");
+    sectionInformation.innerHTML = "";
+    sectionInformation.appendChild(div);
+};
+
+export const informRocketEngineThrustVacuum = async (thrust_vacuum) => {
+    const { kN: totalKN } = await getAllRocketEngineThrustVacuumTotal();
+    const percentage = (thrust_vacuum.kN * 100) / totalKN;
+
+    const div = createProgressBar(percentage, "Speed in space", thrust_vacuum.kN, thrust_vacuum.lbf);
+
+    const sectionInformation = document.querySelector("#grafica2");
+    sectionInformation.appendChild(div);
+};
+
+export const informRocketEngineThrustVacuum1 = async (thrustVacuum) => {
+    const { kN: totalKN } = await getAllRocketEngineThrustVacuumTotal();
+    const percentage = (thrustVacuum.kN * 100) / totalKN;
+
+    const div = createProgressBar(percentage, "Speed in space", thrustVacuum.kN, thrustVacuum.lbf);
+
+    const sectionInformation = document.querySelector("#grafica");
+    sectionInformation.appendChild(div);
+};
